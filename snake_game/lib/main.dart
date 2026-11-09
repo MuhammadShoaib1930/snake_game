@@ -1,13 +1,10 @@
-
 import 'dart:async';
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: SnakeGame(),
-  ));
+  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: SnakeGame()));
 }
 
 class SnakeGame extends StatefulWidget {
@@ -46,10 +43,7 @@ class _SnakeGameState extends State<SnakeGame> {
       generateFood();
     });
 
-    timer = Timer.periodic(
-      const Duration(milliseconds: 250),
-      (timer) => moveSnake(),
-    );
+    timer = Timer.periodic(const Duration(milliseconds: 250), (timer) => moveSnake());
   }
 
   void generateFood() {
@@ -79,18 +73,27 @@ class _SnakeGameState extends State<SnakeGame> {
           break;
       }
 
-      if (head < 0 ||
-          head >= gridSize * gridSize ||
-          (diraction == 'right' && head % gridSize == 0) ||
-          (diraction == 'left' && head % gridSize == gridSize - 1)) {
-        endGame();
-        return;
+      // if (head < 0 ||
+      //     head >= gridSize * gridSize ||
+      //     (diraction == 'right' && head % gridSize == 0) ||
+      //     (diraction == 'left' && head % gridSize == gridSize - 1)) {
+      //   endGame();
+      //   return;
+      // }
+      if (head % gridSize == 0 && diraction == "right") {
+        head -= gridSize;
+      } else if (head < 0 && diraction == 'up') {
+        head = gridSize * gridSize - (gridSize - snake[1]);
+      } else if (head > gridSize * gridSize && diraction == "down") {
+        head = head % 10;
+      } else if (snake[0] % gridSize == 0 && diraction == 'left') {
+        // print("head = $head % grid = $gridSize ${head % gridSize}== 0");
+        head += gridSize;
       }
 
       bool ateFood = head == food;
 
-      if (snake.take(ateFood ? snake.length : snake.length - 1)
-          .contains(head)) {
+      if (snake.take(ateFood ? snake.length : snake.length - 1).contains(head)) {
         endGame();
         return;
       }
@@ -132,20 +135,11 @@ class _SnakeGameState extends State<SnakeGame> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text('Snake Game'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Snake Game'), centerTitle: true),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            'Score: $score',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 25,
-            ),
-          ),
+          Text('Score: $score', style: const TextStyle(color: Colors.white, fontSize: 25)),
 
           const SizedBox(height: 20),
 
@@ -153,10 +147,7 @@ class _SnakeGameState extends State<SnakeGame> {
             aspectRatio: 1,
             child: GridView.builder(
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 20,
-              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 20),
               itemCount: gridSize * gridSize,
               itemBuilder: (context, index) {
                 bool isSnake = snake.contains(index);
@@ -168,8 +159,8 @@ class _SnakeGameState extends State<SnakeGame> {
                     color: isSnake
                         ? Colors.green
                         : isFood
-                            ? Colors.red
-                            : Colors.grey.shade900,
+                        ? Colors.red
+                        : Colors.grey.shade900,
                     borderRadius: BorderRadius.circular(3),
                   ),
                 );
@@ -182,21 +173,11 @@ class _SnakeGameState extends State<SnakeGame> {
           if (gameOver)
             Column(
               children: [
-                const Text(
-                  'GAME OVER!',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 28,
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: startGame,
-                  child: const Text('Restart'),
-                ),
+                const Text('GAME OVER!', style: TextStyle(color: Colors.red, fontSize: 28)),
+                ElevatedButton(onPressed: startGame, child: const Text('Restart')),
               ],
             ),
 
-          // diraction controls
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
